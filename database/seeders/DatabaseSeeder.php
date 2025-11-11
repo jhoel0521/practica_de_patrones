@@ -6,6 +6,8 @@ use App\Models\Task;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Spatie\Permission\Models\Role;
+use Spatie\Permission\Models\Permission;
 
 class DatabaseSeeder extends Seeder
 {
@@ -16,13 +18,34 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
+        // Crear permisos
+        Permission::firstOrCreate(['name' => 'view tasks', 'guard_name' => 'web']);
+        Permission::firstOrCreate(['name' => 'create tasks', 'guard_name' => 'web']);
+        Permission::firstOrCreate(['name' => 'edit tasks', 'guard_name' => 'web']);
+        Permission::firstOrCreate(['name' => 'delete tasks', 'guard_name' => 'web']);
+
+        // Crear roles
+        $adminRole = Role::firstOrCreate(['name' => 'administrador', 'guard_name' => 'web']);
+        $secretarioRole = Role::firstOrCreate(['name' => 'secretario', 'guard_name' => 'web']);
+
+        // Asignar permisos a roles
+        $adminRole->syncPermissions(['view tasks', 'create tasks', 'edit tasks', 'delete tasks']);
+        $secretarioRole->syncPermissions(['view tasks', 'create tasks', 'edit tasks']);
+
+        // Crear usuarios
+        User::factory()->create([
+            'name' => 'Admin User',
+            'email' => 'admin@example.com',
+            'password' => bcrypt('password'),
+        ])->assignRole('administrador');
 
         User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-        ]);
+            'name' => 'Secretario User',
+            'email' => 'secretario@example.com',
+            'password' => bcrypt('password'),
+        ])->assignRole('secretario');
 
+        // Crear tareas de ejemplo
         Task::create([
             'title' => 'Tarea de ejemplo 1',
             'description' => 'Descripción de la primera tarea.',

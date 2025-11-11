@@ -12,6 +12,7 @@ class TaskController extends Controller
      */
     public function index()
     {
+        $this->authorize('viewAny', Task::class);
         $tasks = Task::all();
         return view('tasks.index', compact('tasks'));
     }
@@ -21,6 +22,7 @@ class TaskController extends Controller
      */
     public function create()
     {
+        $this->authorize('create', Task::class);
         return view('tasks.create');
     }
 
@@ -29,6 +31,7 @@ class TaskController extends Controller
      */
     public function store(Request $request)
     {
+        $this->authorize('create', Task::class);
         $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
@@ -45,6 +48,7 @@ class TaskController extends Controller
     public function show(string $id)
     {
         $task = Task::findOrFail($id);
+        $this->authorize('view', $task);
         return view('tasks.show', compact('task'));
     }
 
@@ -54,6 +58,7 @@ class TaskController extends Controller
     public function edit(string $id)
     {
         $task = Task::findOrFail($id);
+        $this->authorize('update', $task);
         return view('tasks.edit', compact('task'));
     }
 
@@ -62,13 +67,14 @@ class TaskController extends Controller
      */
     public function update(Request $request, string $id)
     {
+        $task = Task::findOrFail($id);
+        $this->authorize('update', $task);
         $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
             'completed' => 'boolean',
         ]);
 
-        $task = Task::findOrFail($id);
         $task->update($request->all());
         return redirect()->route('tasks.index');
     }
@@ -79,6 +85,7 @@ class TaskController extends Controller
     public function destroy(string $id)
     {
         $task = Task::findOrFail($id);
+        $this->authorize('delete', $task);
         $task->delete();
         return redirect()->route('tasks.index');
     }
