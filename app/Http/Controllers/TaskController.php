@@ -12,7 +12,6 @@ class TaskController extends Controller
      */
     public function index()
     {
-        $this->authorize('viewAny', Task::class);
         $tasks = Task::all();
         return view('tasks.index', compact('tasks'));
     }
@@ -48,7 +47,6 @@ class TaskController extends Controller
     public function show(string $id)
     {
         $task = Task::findOrFail($id);
-        $this->authorize('view', $task);
         return view('tasks.show', compact('task'));
     }
 
