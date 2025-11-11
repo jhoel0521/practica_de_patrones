@@ -1,6 +1,12 @@
 <x-layouts.app>
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
     <h1 class="text-2xl font-bold mb-4">Lista de Tareas</h1>
+    @guest
+    <div class="mb-4">
+        <a href="{{ route('login') }}" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded mr-2">Iniciar Sesión</a>
+        <a href="{{ route('register') }}" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Registrarse</a>
+    </div>
+    @endguest
     @can('create tasks')
     <a href="{{ route('tasks.create') }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-4 inline-block">Crear Nueva Tarea</a>
     @endcan
